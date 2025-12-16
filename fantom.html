@@ -3,898 +3,1061 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Фантом-Терминал ГНК КИППТ</title>
+    <title>ГНК КИППТ :: ФАНТОМ-ТЕРМИНАЛ</title>
     <style>
-        :root {
-            --primary-blue: #0A1A2F;
-            --secondary-blue: #0d2b4f;
-            --accent-blue: #1a5fb4;
-            --highlight-blue: #62a0ea;
-            --text-blue: #c0d5f7;
-            --terminal-green: #00ff00;
-            --terminal-red: #ff5555;
-            --terminal-yellow: #f1fa8c;
-        }
-        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             font-family: 'Courier New', monospace;
         }
-        
+
         body {
             background-color: #000;
-            color: var(--text-blue);
-            overflow: hidden;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            color: #66d9ff;
+            overflow-x: hidden;
+            min-height: 100vh;
+            position: relative;
         }
-        
-        /* ЭКРАН ЗАГРУЗКИ */
+
+        /* Эффект зернистости старого монитора */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 20, 30, 0.03),
+                rgba(0, 20, 30, 0.03) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+            pointer-events: none;
+            z-index: 100;
+            opacity: 0.7;
+        }
+
+        /* Экран загрузки */
         #boot-screen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: #000;
-            z-index: 1000;
+            background-color: #0a1a2f;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 20px;
-        }
-        
-        .boot-text {
-            color: var(--highlight-blue);
-            font-size: 1.2rem;
-            line-height: 1.8;
-            white-space: pre-wrap;
-            text-shadow: 0 0 5px var(--accent-blue);
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        
-        .boot-line {
-            opacity: 0;
-            animation: typewriter 0.1s forwards;
-            margin-bottom: 10px;
-        }
-        
-        .boot-line:nth-child(1) { animation-delay: 0.5s; }
-        .boot-line:nth-child(2) { animation-delay: 1s; }
-        .boot-line:nth-child(3) { animation-delay: 1.5s; }
-        .boot-line:nth-child(4) { animation-delay: 2s; }
-        .boot-line:nth-child(5) { animation-delay: 2.5s; }
-        .boot-line:nth-child(6) { animation-delay: 3s; }
-        .boot-line:nth-child(7) { animation-delay: 3.5s; }
-        .boot-line:nth-child(8) { animation-delay: 4s; }
-        .boot-line:nth-child(9) { animation-delay: 4.5s; }
-        .boot-line:nth-child(10) { animation-delay: 5s; }
-        .boot-line:nth-child(11) { animation-delay: 5.5s; }
-        .boot-line:nth-child(12) { animation-delay: 6s; }
-        .boot-line:nth-child(13) { animation-delay: 6.5s; }
-        .boot-line:nth-child(14) { animation-delay: 7s; }
-        .boot-line:nth-child(15) { animation-delay: 7.5s; }
-        .boot-line:nth-child(16) { animation-delay: 8s; }
-        .boot-line:nth-child(17) { animation-delay: 8.5s; }
-        
-        @keyframes typewriter {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        .boot-logo {
-            margin-top: 30px;
-            font-size: 3rem;
-            color: var(--accent-blue);
+            z-index: 1000;
             text-align: center;
-            text-shadow: 0 0 10px var(--highlight-blue);
-            line-height: 1.2;
-        }
-        
-        .boot-progress {
-            width: 400px;
-            height: 3px;
-            background-color: var(--secondary-blue);
-            margin-top: 40px;
-            border-radius: 2px;
-            overflow: hidden;
-        }
-        
-        .boot-progress-bar {
-            height: 100%;
-            width: 0%;
-            background-color: var(--highlight-blue);
-            animation: boot-progress 9s ease-in-out forwards;
-        }
-        
-        @keyframes boot-progress {
-            0% { width: 0%; }
-            100% { width: 100%; }
-        }
-        
-        /* ОСНОВНОЙ ТЕРМИНАЛ */
-        #terminal {
-            display: none;
-            width: 100%;
-            height: 100vh;
-            background-color: var(--primary-blue);
+            color: #66d9ff;
             padding: 20px;
+        }
+
+        .boot-logo {
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle, #0a1a2f 0%, #050d17 70%);
+            border-radius: 50%;
+            margin: 20px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 3px solid #1a5fb4;
+            box-shadow: 
+                0 0 15px rgba(26, 95, 180, 0.7),
+                inset 0 0 10px rgba(0, 0, 0, 0.8);
             position: relative;
             overflow: hidden;
         }
-        
+
+        .boot-logo::before {
+            content: '';
+            position: absolute;
+            width: 70%;
+            height: 70%;
+            background: radial-gradient(circle, #1a5fb4 0%, transparent 70%);
+            border-radius: 50%;
+            opacity: 0.6;
+        }
+
+        .boot-logo::after {
+            content: 'ГНК';
+            position: relative;
+            color: #66d9ff;
+            font-weight: bold;
+            font-size: 24px;
+            text-shadow: 0 0 10px rgba(102, 217, 255, 0.7);
+            letter-spacing: 2px;
+            z-index: 2;
+        }
+
+        /* Контейнер для фразы */
+        .phrase-container {
+            margin: 30px 0;
+            min-height: 150px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            width: 100%;
+        }
+
+        .phrase-line {
+            font-size: 32px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-shadow: 0 0 10px currentColor;
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        /* Цвета для каждой строки */
+        #phrase-line1 {
+            color: #66d9ff;
+        }
+
+        #phrase-line2 {
+            color: #2a7fff;
+        }
+
+        #phrase-line3 {
+            color: #a0d2ff;
+        }
+
+        /* Эффект глитча */
+        @keyframes glitch1 {
+            0% { transform: translate(0, 0); }
+            20% { transform: translate(-3px, 3px); text-shadow: 3px -3px #ff5555; }
+            40% { transform: translate(3px, -3px); text-shadow: -3px 3px #00ff00; }
+            60% { transform: translate(-3px, 3px); text-shadow: 3px -3px #2a7fff; }
+            80% { transform: translate(3px, -3px); text-shadow: -3px 3px #ffff00; }
+            100% { transform: translate(0, 0); text-shadow: 0 0 10px currentColor; }
+        }
+
+        @keyframes glitch2 {
+            0% { transform: translate(0, 0); }
+            25% { transform: translate(4px, 0); text-shadow: 4px 0 #ff0000; }
+            50% { transform: translate(0, 4px); text-shadow: 0 4px #00ff00; }
+            75% { transform: translate(-4px, 0); text-shadow: -4px 0 #0000ff; }
+            100% { transform: translate(0, 0); text-shadow: 0 0 10px currentColor; }
+        }
+
+        @keyframes glitch3 {
+            0% { transform: translate(0) skew(0); }
+            33% { transform: translate(5px, 2px) skew(7deg); opacity: 0.7; }
+            66% { transform: translate(-4px, -2px) skew(-7deg); opacity: 0.5; }
+            100% { transform: translate(0) skew(0); opacity: 1; }
+        }
+
+        .glitch-effect {
+            animation-duration: 0.3s;
+            animation-iteration-count: 3;
+            animation-timing-function: linear;
+        }
+
+        /* Типографский эффект */
+        .typewriter {
+            overflow: hidden;
+            border-right: 3px solid;
+            white-space: nowrap;
+            animation: typing 2.5s steps(30, end), blink 0.75s step-end infinite;
+        }
+
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        @keyframes blink {
+            from, to { border-color: transparent; }
+            50% { border-color: currentColor; }
+        }
+
+        .boot-status {
+            margin-top: 20px;
+            color: #a0d2ff;
+            font-size: 16px;
+            width: 100%;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .status-bar {
+            width: 100%;
+            height: 24px;
+            background-color: #071222;
+            margin: 15px 0;
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px solid #2a6f8f;
+            box-shadow: 0 0 5px rgba(0, 40, 60, 0.8);
+        }
+
+        .status-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0a3a5f 0%, #0f5c8f 100%);
+            width: 0%;
+            transition: width 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .status-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -50%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(102, 217, 255, 0.3), transparent);
+            animation: shine 2s infinite;
+        }
+
+        @keyframes shine {
+            100% {
+                left: 150%;
+            }
+        }
+
+        .boot-footer {
+            position: absolute;
+            bottom: 30px;
+            color: #4a8ccf;
+            font-size: 13px;
+            width: 100%;
+            text-align: center;
+            padding: 0 20px;
+            text-shadow: 0 0 3px rgba(0, 20, 40, 0.8);
+        }
+
+        /* Анимации */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.5s ease-out forwards;
+        }
+
+        /* Терминал */
+        #terminal {
+            display: none;
+            min-height: 100vh;
+            background-color: #050d17;
+            color: #66d9ff;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .terminal-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
         .terminal-header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--accent-blue);
-            padding-bottom: 10px;
-            margin-bottom: 20px;
+            align-items: flex-start;
+            padding: 15px 0;
+            border-bottom: 2px solid #0a2844;
+            margin-bottom: 25px;
+            position: relative;
         }
-        
-        .terminal-title {
-            color: var(--highlight-blue);
-            font-size: 1.8rem;
-            text-shadow: 0 0 5px var(--accent-blue);
-        }
-        
-        .terminal-subtitle {
-            color: var(--text-blue);
-            font-size: 1rem;
-        }
-        
-        .terminal-status {
-            display: flex;
-            gap: 15px;
-        }
-        
-        .status-item {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        
-        .status-indicator {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-        }
-        
-        .status-online {
-            background-color: var(--terminal-green);
-            box-shadow: 0 0 5px var(--terminal-green);
-        }
-        
-        .status-recovery {
-            background-color: var(--terminal-yellow);
-            box-shadow: 0 0 5px var(--terminal-yellow);
-            animation: pulse 1.5s infinite;
-        }
-        
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
-        }
-        
-        .terminal-body {
-            display: flex;
-            height: calc(100vh - 150px);
-            gap: 20px;
-        }
-        
-        .terminal-sidebar {
-            width: 250px;
-            background-color: rgba(0, 0, 0, 0.3);
-            border-radius: 5px;
-            padding: 15px;
-            border: 1px solid var(--accent-blue);
-        }
-        
-        .sidebar-title {
-            color: var(--highlight-blue);
-            border-bottom: 1px solid var(--accent-blue);
-            padding-bottom: 5px;
-            margin-bottom: 15px;
-        }
-        
-        .menu-item {
-            padding: 10px;
-            margin-bottom: 8px;
-            background-color: rgba(26, 95, 180, 0.1);
-            border-left: 3px solid transparent;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        .menu-item:hover {
-            background-color: rgba(26, 95, 180, 0.3);
-            border-left: 3px solid var(--highlight-blue);
-        }
-        
-        .menu-item.active {
-            background-color: rgba(26, 95, 180, 0.4);
-            border-left: 3px solid var(--highlight-blue);
-        }
-        
-        .terminal-content {
-            flex: 1;
-            background-color: rgba(0, 0, 0, 0.3);
-            border-radius: 5px;
-            padding: 20px;
-            overflow-y: auto;
-            border: 1px solid var(--accent-blue);
-        }
-        
-        .content-section {
-            display: none;
-        }
-        
-        .content-section.active {
-            display: block;
-        }
-        
-        .content-title {
-            color: var(--highlight-blue);
-            font-size: 1.5rem;
-            margin-bottom: 15px;
-            border-bottom: 1px solid var(--accent-blue);
-            padding-bottom: 5px;
-        }
-        
-        .content-text {
-            line-height: 1.6;
-            margin-bottom: 15px;
-        }
-        
-        .anomaly-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
-        }
-        
-        .anomaly-card {
-            background-color: rgba(0, 0, 0, 0.5);
-            border: 1px solid var(--accent-blue);
-            border-radius: 5px;
-            padding: 15px;
-            transition: all 0.3s;
-        }
-        
-        .anomaly-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(26, 95, 180, 0.3);
-        }
-        
-        .anomaly-code {
-            color: var(--terminal-yellow);
-            font-weight: bold;
-            font-size: 1.2rem;
-        }
-        
-        .anomaly-name {
-            color: var(--highlight-blue);
-            margin: 8px 0;
-        }
-        
-        .anomaly-desc {
-            font-size: 0.9rem;
-            color: #aaa;
-        }
-        
-        .alert {
-            background-color: rgba(139, 0, 0, 0.2);
-            border: 1px solid #8B0000;
-            padding: 10px;
-            border-radius: 5px;
-            margin: 15px 0;
-        }
-        
-        .command-line {
-            background-color: rgba(0, 0, 0, 0.7);
-            padding: 15px;
-            border-radius: 5px;
-            margin-top: 20px;
-            border: 1px solid var(--accent-blue);
-        }
-        
-        .command-prompt {
-            color: var(--terminal-green);
-            margin-right: 10px;
-        }
-        
-        .command-input {
-            background: transparent;
-            border: none;
-            color: var(--text-blue);
-            font-size: 1rem;
-            width: calc(100% - 100px);
-            outline: none;
-        }
-        
-        .glitch {
+
+        .terminal-header::after {
+            content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(
-                rgba(10, 26, 47, 0.1) 50%,
-                rgba(26, 95, 180, 0.1) 50%
-            );
-            background-size: 100% 4px;
-            z-index: -1;
-            opacity: 0.1;
-            pointer-events: none;
-        }
-        
-        .scanline {
-            position: absolute;
-            top: 0;
+            bottom: -2px;
             left: 0;
             width: 100%;
             height: 2px;
-            background: rgba(98, 160, 234, 0.5);
-            box-shadow: 0 0 10px rgba(98, 160, 234, 0.7);
-            z-index: 999;
-            animation: scan 8s linear infinite;
-            display: none;
+            background: linear-gradient(90deg, transparent, #1a5fb4, transparent);
         }
-        
-        @keyframes scan {
-            0% { top: 0%; }
-            100% { top: 100%; }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
         }
-        
-        .terminal-footer {
+
+        .logo-text {
+            font-size: 32px;
+            color: #66d9ff;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(102, 217, 255, 0.7);
+            letter-spacing: 1px;
+        }
+
+        .system-info {
+            font-size: 14px;
+            color: #a0d2ff;
+            text-align: right;
+            max-width: 400px;
+        }
+
+        .terminal-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 25px;
+            min-height: calc(100vh - 200px);
+        }
+
+        .main-content {
+            background: linear-gradient(145deg, #071528, #0a1a2f);
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 
+                0 0 15px rgba(0, 20, 40, 0.7),
+                inset 0 0 10px rgba(10, 26, 47, 0.8);
+            border: 1px solid #0a2844;
+            overflow-y: auto;
+            max-height: calc(100vh - 250px);
+            position: relative;
+        }
+
+        .main-content::before {
+            content: '';
             position: absolute;
-            bottom: 0;
+            top: 0;
             left: 0;
-            width: 100%;
-            padding: 10px 20px;
-            background-color: rgba(0, 0, 0, 0.5);
-            border-top: 1px solid var(--accent-blue);
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, #1a5fb4, transparent);
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .panel {
+            background: linear-gradient(145deg, #071528, #0a1a2f);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 
+                0 0 15px rgba(0, 20, 40, 0.7),
+                inset 0 0 10px rgba(10, 26, 47, 0.8);
+            border: 1px solid #0a2844;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #66d9ff, transparent);
+        }
+
+        .panel-title {
+            color: #66d9ff;
+            margin-bottom: 15px;
+            font-weight: bold;
+            font-size: 18px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #0a2844;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .panel-title::before {
+            content: '>';
+            color: #1a5fb4;
+            font-weight: bold;
+        }
+
+        .system-status {
+            min-height: 160px;
+        }
+
+        .status-items {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .status-item {
             display: flex;
             justify-content: space-between;
-            font-size: 0.9rem;
+            padding: 8px 10px;
+            background-color: rgba(10, 40, 68, 0.3);
+            border-radius: 4px;
+            font-size: 14px;
         }
-        
-        .blink {
-            animation: blink 1s infinite;
+
+        .status-label {
+            font-weight: bold;
+            color: #a0d2ff;
         }
-        
-        @keyframes blink {
-            0%, 50% { opacity: 1; }
-            51%, 100% { opacity: 0; }
+
+        .status-value {
+            font-weight: bold;
         }
-        
-        /* АДАПТИВНОСТЬ */
-        @media (max-width: 900px) {
-            .terminal-body {
-                flex-direction: column;
-                height: calc(100vh - 200px);
-            }
-            
-            .terminal-sidebar {
-                width: 100%;
-                height: auto;
-            }
-            
-            .anomaly-grid {
+
+        .status-online {
+            color: #4caf50;
+        }
+
+        .status-offline {
+            color: #ff5252;
+        }
+
+        .status-recovery {
+            color: #ff9800;
+        }
+
+        .guestbook {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .guestbook-entries {
+            flex-grow: 1;
+            overflow-y: auto;
+            max-height: 300px;
+            display: flex;
+            flex-direction: column-reverse;
+            gap: 12px;
+            padding-right: 5px;
+        }
+
+        .guestbook-entry {
+            background-color: rgba(10, 40, 68, 0.3);
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            border-left: 3px solid #66d9ff;
+            position: relative;
+        }
+
+        .guestbook-entry::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, #1a5fb4, #66d9ff);
+        }
+
+        .guestbook-entry strong {
+            color: #66d9ff;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .guestbook-form {
+            margin-top: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .guestbook-form input,
+        .guestbook-form textarea {
+            background-color: #071528;
+            border: 1px solid #0a2844;
+            color: #66d9ff;
+            padding: 10px;
+            font-family: 'Courier New', monospace;
+            border-radius: 4px;
+            resize: none;
+            transition: border-color 0.3s;
+        }
+
+        .guestbook-form input:focus,
+        .guestbook-form textarea:focus {
+            outline: none;
+            border-color: #66d9ff;
+            box-shadow: 0 0 5px rgba(102, 217, 255, 0.3);
+        }
+
+        .guestbook-form button {
+            background: linear-gradient(90deg, #0a2844, #0f3c66);
+            color: #66d9ff;
+            border: 1px solid #0a2844;
+            padding: 10px 15px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            border-radius: 4px;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 14px;
+        }
+
+        .guestbook-form button:hover {
+            background: linear-gradient(90deg, #0f3c66, #145a8f);
+            border-color: #66d9ff;
+            box-shadow: 0 0 8px rgba(102, 217, 255, 0.4);
+        }
+
+        .guestbook-form button:active {
+            transform: translateY(1px);
+        }
+
+        .scrolling-text {
+            background: linear-gradient(90deg, #0a2844, #071528);
+            color: #a0d2ff;
+            padding: 10px 15px;
+            margin-top: 10px;
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+            border: 1px solid #1a5fb4;
+            box-shadow: 0 0 8px rgba(26, 95, 180, 0.5);
+        }
+
+        .scrolling-content {
+            display: inline-block;
+            white-space: nowrap;
+            animation: scroll 25s linear infinite;
+            padding-right: 100%;
+        }
+
+        @keyframes scroll {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        .weather-info {
+            margin-top: auto;
+            padding-top: 15px;
+            border-top: 1px dashed #0a2844;
+        }
+
+        .weather-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 6px 0;
+            font-size: 14px;
+        }
+
+        .weather-label {
+            color: #a0d2ff;
+        }
+
+        .counter {
+            background: linear-gradient(90deg, #0a2844, #071528);
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
+            margin-top: 15px;
+            font-size: 22px;
+            color: #66d9ff;
+            font-weight: bold;
+            text-shadow: 0 0 8px rgba(102, 217, 255, 0.7);
+            border: 1px solid #1a5fb4;
+            box-shadow: 0 0 10px rgba(26, 95, 180, 0.3);
+        }
+
+        .classified {
+            color: #a0d2ff;
+            background-color: rgba(26, 95, 180, 0.2);
+            padding: 8px 15px;
+            border-radius: 4px;
+            margin: 15px 0;
+            border-left: 3px solid #1a5fb4;
+            font-weight: bold;
+            font-size: 18px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .classified::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(26, 95, 180, 0.1), transparent);
+            animation: classified-shine 3s infinite;
+        }
+
+        @keyframes classified-shine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .anomaly-list {
+            list-style-type: none;
+            margin: 15px 0;
+            padding-left: 10px;
+        }
+
+        .anomaly-list li {
+            margin: 8px 0;
+            padding: 8px 12px;
+            background-color: rgba(10, 40, 68, 0.2);
+            border-radius: 4px;
+            border-left: 2px solid #66d9ff;
+            font-size: 14px;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #4a8ccf;
+            font-size: 13px;
+            border-top: 1px solid #0a2844;
+            margin-top: 20px;
+            text-shadow: 0 0 3px rgba(0, 20, 40, 0.8);
+        }
+
+        /* Адаптивность */
+        @media (max-width: 1100px) {
+            .terminal-grid {
                 grid-template-columns: 1fr;
             }
             
-            .boot-text {
-                font-size: 1rem;
+            .terminal-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
             }
             
-            .boot-logo {
-                font-size: 2rem;
+            .system-info {
+                text-align: left;
+                width: 100%;
             }
             
-            .boot-progress {
-                width: 300px;
+            .phrase-line {
+                font-size: 28px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .phrase-line {
+                font-size: 24px;
+                letter-spacing: 2px;
+            }
+            
+            .logo-text {
+                font-size: 28px;
+            }
+            
+            .classified {
+                font-size: 16px;
+            }
+            
+            .panel-title {
+                font-size: 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .phrase-line {
+                font-size: 20px;
+            }
+            
+            .logo-text {
+                font-size: 24px;
+            }
+            
+            .terminal-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .guestbook-form input,
+            .guestbook-form textarea {
+                font-size: 14px;
             }
         }
     </style>
 </head>
 <body>
-    <!-- ЭКРАН ЗАГРУЗКИ -->
+    <!-- Экран загрузки -->
     <div id="boot-screen">
-        <div class="boot-text">
-            <div class="boot-line">ИНИЦИАЛИЗАЦИЯ СИСТЕМЫ ГНК КИППТ...</div>
-            <div class="boot-line">ПРОВЕРКА ЦЕЛОСТНОСТИ ЯДРА...</div>
-            <div class="boot-line">ЗАГРУЗКА ПРОТОКОЛОВ СДЕРЖИВАНИЯ...</div>
-            <div class="boot-line">ПОДКЛЮЧЕНИЕ К ТЕНЕСКАН... УСПЕХ</div>
-            <div class="boot-line">ПОДКЛЮЧЕНИЕ К НОКСОМ... ОШИБКА (ВОССТАНОВЛЕНИЕ)</div>
-            <div class="boot-line">ПОДКЛЮЧЕНИЕ К ГЛОССАРИЙ... УСПЕХ</div>
-            <div class="boot-line">ИНИЦИАЛИЗАЦИЯ ЭРЕБ-7... ВЫПОЛНЕНО</div>
-            <div class="boot-line">ЗАГРУЗКА БАЗЫ АНОМАЛИЙ...</div>
-            <div class="boot-line">ПРОВЕРКА ПРОТОКОЛОВ БЕЗОПАСНОСТИ...</div>
-            <div class="boot-line">ИНИЦИАЛИЗАЦИЯ ФАНТОМ-ТЕРМИНАЛА...</div>
-            <div class="boot-line">СИНХРОНИЗАЦИЯ С ЦЕНТРАЛЬНЫМ СЕРВЕРОМ...</div>
-            <div class="boot-line">ПРОВЕРКА УРОВНЯ ДОСТУПА... ДОСТУП ПОДТВЕРЖДЕН</div>
-            <div class="boot-line">ЗАГРУЗКА ДАННЫХ О ПОСТКОЛЛАПСНЫХ ТЕРРИТОРИЯХ...</div>
-            <div class="boot-line">ПОДГОТОВКА ОТЧЕТА ПО ИНИЦИАТИВЕ КИППТ...</div>
-            <div class="boot-line">СИСТЕМА ГОТОВА К ИСПОЛЬЗОВАНИЮ</div>
+        <div class="boot-logo"></div>
+        <div class="phrase-container">
+            <div class="phrase-line" id="phrase-line1"></div>
+            <div class="phrase-line" id="phrase-line2"></div>
+            <div class="phrase-line" id="phrase-line3"></div>
         </div>
-        
-        <div class="boot-logo">
-            ГОСУДАРСТВЕННО-НАУЧНАЯ КОРПОРАЦИЯ<br>
-            <span style="font-size: 2.5rem; color: var(--highlight-blue)">КИППТ</span>
+        <div class="boot-status">
+            <div id="boot-status-text">Инициализация ядра системы...</div>
+            <div class="status-bar">
+                <div class="status-fill" id="status-fill"></div>
+            </div>
+            <span id="boot-progress">0%</span>
         </div>
-        
-        <div class="boot-progress">
-            <div class="boot-progress-bar"></div>
+        <div class="boot-footer">
+            Государственно-Научная Корпорация Контроля, Исследования и Поддержания Порядка на Постколлапсных Территориях
+            <br>Система ФАНТОМ-ТЕРМИНАЛ v7.3.1 :: Безопасность превыше всего
         </div>
     </div>
-    
-    <!-- ОСНОВНОЙ ТЕРМИНАЛ -->
+
+    <!-- Терминал -->
     <div id="terminal">
-        <div class="glitch"></div>
-        <div class="scanline" id="scanline"></div>
-        
-        <div class="terminal-header">
-            <div>
-                <div class="terminal-title">ФАНТОМ-ТЕРМИНАЛ v2.1</div>
-                <div class="terminal-subtitle">ГНК КИППТ • Уровень доступа: 4 • СИ-08</div>
-            </div>
-            <div class="terminal-status">
-                <div class="status-item">
-                    <div class="status-indicator status-online"></div>
-                    <span>ТЕНЕСКАН</span>
+        <div class="terminal-container">
+            <div class="terminal-header">
+                <div class="logo-section">
+                    <div class="logo-text">ГНК КИППТ</div>
                 </div>
-                <div class="status-item">
-                    <div class="status-indicator status-recovery"></div>
-                    <span>НОКСОМ</span>
-                </div>
-                <div class="status-item">
-                    <div class="status-indicator status-online"></div>
-                    <span>ГЛОССАРИЙ</span>
+                <div class="system-info">
+                    <div>Система: ФАНТОМ-ТЕРМИНАЛ v7.3.1</div>
+                    <div>Классификация: ДЛЯ СЛУЖЕБНОГО ПОЛЬЗОВАНИЯ</div>
+                    <div>Зона: СИ-08 (Ноквистский филиал)</div>
+                    <div>Дата: 17.12.2025 :: Время: <span id="current-time">09:45</span></div>
                 </div>
             </div>
-        </div>
-        
-        <div class="terminal-body">
-            <div class="terminal-sidebar">
-                <div class="sidebar-title">НАВИГАЦИЯ</div>
-                <div class="menu-item active" data-section="main-report">Сводный отчет КИППТ</div>
-                <div class="menu-item" data-section="anomalies">Классификация аномалий</div>
-                <div class="menu-item" data-section="chronology">Хронология 2010 года</div>
-                <div class="menu-item" data-section="structure">Оргструктура ГНК</div>
-                <div class="menu-item" data-section="nokvist">Ноквистский филиал</div>
-                <div class="menu-item" data-section="glossary">Глоссарий терминов</div>
-            </div>
-            
-            <div class="terminal-content">
-                <!-- Сводный отчет -->
-                <div class="content-section active" id="main-report">
-                    <div class="content-title">СВОДНЫЙ ОТЧЁТ ПО ИНИЦИАТИВЕ «КИППТ»</div>
-                    <div class="alert">
-                        <strong>Классификация:</strong> ДЛЯ СЛУЖЕБНОГО ПОЛЬЗОВАНИЯ<br>
-                        <strong>Дата экспорта:</strong> Текущая<br>
-                        <strong>Статус:</strong> Концептуальное моделирование завершено. Сеттинг стабилен.
-                    </div>
+
+            <div class="terminal-grid">
+                <div class="main-content">
+                    <div class="classified">СВОДНЫЙ ОТЧЁТ ПО ИНИЦИАТИВЕ «КИППТ»</div>
+                    <p><strong>Классификация:</strong> ДЛЯ СЛУЖЕБНОГО ПОЛЬЗОВАНИЯ</p>
+                    <p><strong>Дата экспорта:</strong> 17.12.2025</p>
+                    <p><strong>Статус:</strong> Концептуальное моделирование завершено. Сеттинг стабилен.</p>
                     
-                    <div class="content-text">
-                        <p><strong>Государственно-Научная Корпорация Контроля, Исследования и Поддержания Порядка на Постколлапсных Территориях (ГНК КИППТ)</strong> является основной структурой, ответственной за управление аномальными явлениями после глобального коллапса.</p>
-                        
-                        <p><strong>Миссия:</strong> Управление, изучение и сдерживание аномалий, возникших после неопределенного глобального коллапса ("Постколлапс").</p>
-                        
-                        <p><strong>Девизы:</strong></p>
-                        <ul>
-                            <li><strong>Официальный:</strong> «Наука. Контроль. Порядок.»</li>
-                            <li><strong>Внутренний:</strong> «Тьма – наш дом. Аномалии – наш объект изучения.»</li>
-                            <li><strong>Пропагандистский:</strong> «Выживание через регулирование.»</li>
-                        </ul>
-                        
-                        <p>Система функционирует на основе пяти основных подразделений, каждое из которых отвечает за свой сектор деятельности по контролю и исследованию аномалий.</p>
-                    </div>
+                    <div class="classified">АКТИВНЫЕ АНОМАЛИИ ЗОНЫ СИ-08:</div>
+                    <ul class="anomaly-list">
+                        <li><strong>ХИ-С-Р-112</strong> :: "Стеклянный ветер" :: Статус: <span class="status-online">КОНТЕЙНЕРИЗОВАНО</span></li>
+                        <li><strong>ПСИ-С-М-055</strong> :: "Эхо спокойствия" :: Статус: <span class="status-online">АКТИВЕН</span></li>
+                        <li><strong>ТК-М-Л-33</strong> :: "Червь сновидений" :: Статус: <span class="status-recovery">ЛАТЕНТНЫЙ</span></li>
+                        <li><strong>РФ-Д-Х-198</strong> :: "Тени Статуи Свободы" :: Статус: <span class="status-offline">НАБЛЮДЕНИЕ</span></li>
+                    </ul>
+
+                    <div class="classified">ПОСЛЕДНИЕ СОБЫТИЯ:</div>
+                    <p><strong>17.12.2025 08:30:</strong> Система НОКСОМ восстановлена после инцидента 2010 года. Проведено тестирование всех подсистем.</p>
+                    <p><strong>17.12.2025 07:15:</strong> Дежурная смена УПП провела рейд в секторе 7-Г. Нарушений не выявлено. Обнаружены следы присутствия гражданских лиц.</p>
+                    <p><strong>17.12.2025 06:00:</strong> Активирован ТЕНЕСКАН. Уровень угрозы: <span class="status-online">НИЗКИЙ</span></p>
+                    <p><strong>16.12.2025 23:47:</strong> Тревога в секторе 3-А. Группа неизвестных проникла в периметр. Все объекты нейтрализованы силами ОСО.</p>
+                    <p><strong>16.12.2025 14:22:</strong> Авария в лаборатории 4. Стабилизаторы вышли из строя. Ремонт завершен в 18:05.</p>
                 </div>
-                
-                <!-- Классификация аномалий -->
-                <div class="content-section" id="anomalies">
-                    <div class="content-title">СИСТЕМА КЛАССИФИКАЦИИ АНОМАЛИЙ (Редакция 1.2)</div>
-                    
-                    <div class="content-text">
-                        <p><strong>Формат кода:</strong> ТИП-ПОДКАТЕГОРИЯ-СВОЙСТВО-НОМЕР</p>
-                        
-                        <p><strong>Базовые типы (ТИП):</strong></p>
-                        <ul>
-                            <li><strong>ПР:</strong> Пространственные (нарушение законов физики)</li>
-                            <li><strong>БИО:</strong> Биологические (мутировавшая флора/фауна)</li>
-                            <li><strong>ПСИ:</strong> Психотропные (влияние на сознание)</li>
-                            <li><strong>ХР:</strong> Хроноаномалии (искажение времени)</li>
-                            <li><strong>АРТ:</strong> Артефакты (аномальные объекты)</li>
-                            <li><strong>ТК:</strong> Техногенные (остатки технологий)</li>
-                            <li><strong>РФ:</strong> Реликт-фантомы (призраки исчезнувших городов/государств)</li>
-                        </ul>
-                    </div>
-                    
-                    <div class="anomaly-grid">
-                        <div class="anomaly-card">
-                            <div class="anomaly-code">ТК-Я-Х-47</div>
-                            <div class="anomaly-name">«Радио "Голос Мёртвых"»</div>
-                            <div class="anomaly-desc">Техногенная аномалия ядерной эры, активирующаяся ночью. Транслирует сообщения на частотах, которых не должно существовать.</div>
-                        </div>
-                        
-                        <div class="anomaly-card">
-                            <div class="anomaly-code">РФ-Д-Х-198</div>
-                            <div class="anomaly-name">«Тени Статуи Свободы»</div>
-                            <div class="anomaly-desc">Динамические реликт-фантомы в зоне Нью-Йорка. Проявляются при определённых атмосферных условиях.</div>
-                        </div>
-                        
-                        <div class="anomaly-card">
-                            <div class="anomaly-code">ХИ-С-Н-901</div>
-                            <div class="anomaly-name">«Красный снег»</div>
-                            <div class="anomaly-desc">Статичная химическая аномалия в Сибири, вызывающая ожоги и галлюцинации при контакте.</div>
+
+                <div class="sidebar">
+                    <div class="panel system-status">
+                        <div class="panel-title">СТАТУС СИСТЕМ</div>
+                        <div class="status-items">
+                            <div class="status-item">
+                                <span class="status-label">ТЕНЕСКАН:</span>
+                                <span class="status-value status-online">ОНЛАЙН</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="status-label">НОКСОМ:</span>
+                                <span class="status-value status-recovery">ВОССТАНОВЛЕНИЕ</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="status-label">ГЛОССАРИЙ:</span>
+                                <span class="status-value status-online">ОНЛАЙН</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="status-label">ЭРЕБ-7:</span>
+                                <span class="status-value status-offline">ОФФЛАЙН</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="status-label">ФАНТОМ-ТЕРМИНАЛ:</span>
+                                <span class="status-value status-online">АКТИВЕН</span>
+                            </div>
                         </div>
                     </div>
-                </div>
-                
-                <!-- Хронология -->
-                <div class="content-section" id="chronology">
-                    <div class="content-title">ХРОНОЛОГИЯ КЛЮЧЕВЫХ СОБЫТИЙ 2010 ГОДА</div>
-                    
-                    <div class="content-text">
-                        <p><strong>«Дело о сбитом самолёте» (Январь-Март)</strong></p>
-                        <p>Частный самолёт нарушает воздушное пространство зоны СИ-08 (Забайкалье) и разбивается под воздействием новой аномалии ХИ-С-Р-112 («Стеклянный ветер»). Проведена зачистка ОСО, классификация аномалии, кампания дезинформации от БИК.</p>
-                        
-                        <p><strong>«Бунт в посёлке 12-Г» (Апрель-Июнь)</strong></p>
-                        <p>Бунт сотрудников низшего звена из-за задержек зарплаты на станции ГНК в Красноярском крае. Подавлен силами УПП с использованием психотропного генератора ПСИ-С-М-055 («Эхо спокойствия»).</p>
-                        
-                        <p><strong>«Инцидент с партией сталкеров» (Июль-Сентябрь)</strong></p>
-                        <p>Гражданские мародёры похищают артефакты на периметре зоны УР-09 (Южный Урал). Операция ОСО «Возмездие» с ликвидацией сталкеров аномальным артефактом.</p>
-                        
-                        <p><strong>«Кризис системы НОКСОМ» (Октябрь-Декабрь)</strong></p>
-                        <p>Масштабный 72-часовой сбой системы управления «НОКСОМ» из-за активации латентной меметической аномалии ТК-М-Л-33 («Червь сновидений»), годами паразитировавшей в системе. Унизительное восстановление по бумажным архивам.</p>
+
+                    <div class="panel guestbook">
+                        <div class="panel-title">ГОСТЕВАЯ КНИГА :: СИ-08</div>
+                        <div class="guestbook-entries" id="guestbook-entries">
+                            <div class="guestbook-entry">
+                                <strong>[СИСТЕМА]</strong> <span class="timestamp">17.12.2025 09:15</span><br>
+                                Добро пожаловать в терминал Ноквистского филиала. Ваши сообщения помогают улучшать работу.
+                            </div>
+                            <div class="guestbook-entry">
+                                <strong>[АГЕНТ_К-778]</strong> <span class="timestamp">16.12.2025 23:47</span><br>
+                                Патруль в секторе 3-А обнаружил несанкционированное проникновение. Требуется подкрепление УПП.
+                            </div>
+                            <div class="guestbook-entry">
+                                <strong>[ТЕХНИК_В-42]</strong> <span class="timestamp">16.12.2025 14:22</span><br>
+                                Стабилизаторы в лаборатории 4 вышли из строя. Требуется ремонт к 18:00.
+                            </div>
+                            <div class="guestbook-entry">
+                                <strong>[СТАРШИЙ_ИНСПЕКТОР]</strong> <span class="timestamp">16.12.2025 10:05</span><br>
+                                Все сотрудники обязаны пройти внеплановую проверку на лояльность к 18:00.
+                            </div>
+                        </div>
+                        <form class="guestbook-form" id="guestbook-form">
+                            <input type="text" placeholder="Ваше имя/ID" required maxlength="20">
+                            <textarea placeholder="Сообщение (макс. 100 символов)" rows="3" required maxlength="100"></textarea>
+                            <button type="submit">Отправить</button>
+                        </form>
                     </div>
-                </div>
-                
-                <!-- Оргструктура -->
-                <div class="content-section" id="structure">
-                    <div class="content-title">ОРГАНИЗАЦИОННАЯ СТРУКТУРА И ТЕХНОЛОГИИ</div>
-                    
-                    <div class="content-text">
-                        <p><strong>Подразделения ГНК КИППТ:</strong></p>
-                        <ul>
-                            <li><strong>ДАИ</strong> (Департамент Аномальных Исследований): Фундаментальная наука и классификация.</li>
-                            <li><strong>УПП</strong> (Управление Постколлапсного Порядка): Военизированная жандармерия и контроль населения.</li>
-                            <li><strong>ЦКТ</strong> (Центр Ксенотехнологий): Прикладные разработки на основе аномалий.</li>
-                            <li><strong>БИК</strong> (Бюро Информационного Контроля): Пропаганда, цензура, управление данными.</li>
-                            <li><strong>ОСО</strong> (Отдел Специальных Операций): Скрытые зачистки и ликвидации.</li>
-                        </ul>
+
+                    <div class="panel">
+                        <div class="scrolling-text">
+                            <div class="scrolling-content">
+                                ••• ВНИМАНИЕ ••• Ограничен доступ в зону 7-Г ••• Проводятся учения УПП ••• Сообщить о подозрительной активности по каналу 77-ГНК ••• Соблюдайте протоколы безопасности •••
+                            </div>
+                        </div>
                         
-                        <p><strong>Программно-аппаратные комплексы (ПО):</strong></p>
-                        <ul>
-                            <li><strong>«ТЕНЕСКАН»:</strong> Система мониторинга и обнаружения угроз.</li>
-                            <li><strong>«НОКСОМ»:</strong> Операционная платформа для управления ресурсами и логистики.</li>
-                            <li><strong>«ГЛОССАРИЙ»:</strong> Централизованная база данных аномалий и протоколов сдерживания.</li>
-                            <li><strong>«ЭРЕБ-7»:</strong> Искусственный интеллект для анализа социума и прогнозирования беспорядков.</li>
-                            <li><strong>«ФАНТОМ-ТЕРМИНАЛ»:</strong> Полевой интерфейс для оперативного доступа агентов к данным.</li>
-                        </ul>
-                    </div>
-                </div>
-                
-                <!-- Ноквистский филиал -->
-                <div class="content-section" id="nokvist">
-                    <div class="content-title">ВЕБ-РЕСУРС НОКВИСТСКОГО ФИЛИАЛА (СИ-08)</div>
-                    
-                    <div class="content-text">
-                        <p><strong>Цель:</strong> Информационный фронтенд для населения и сотрудников. Маскировка реальной деятельности под «экологический мониторинг».</p>
+                        <div class="weather-info">
+                            <div class="panel-title">ПОГОДА :: ЗОНА СИ-08</div>
+                            <div class="weather-item">
+                                <span class="weather-label">Текущее состояние:</span>
+                                <span>Туман, -15°C</span>
+                            </div>
+                            <div class="weather-item">
+                                <span class="weather-label">Аномальная активность:</span>
+                                <span class="status-recovery">Низкая</span>
+                            </div>
+                            <div class="weather-item">
+                                <span class="weather-label">Рекомендации:</span>
+                                <span>Термозащита ОБЯЗАТЕЛЬНА</span>
+                            </div>
+                            <div class="weather-item">
+                                <span class="weather-label">Дежурный:</span>
+                                <span>Ст. инспектор Воронцов А.В.</span>
+                            </div>
+                        </div>
                         
-                        <p><strong>Технические характеристики (аутентичные для эпохи 2000-2010-х):</strong></p>
-                        <ul>
-                            <li><strong>Кодировка:</strong> UTF-8</li>
-                            <li><strong>Вёрстка:</strong> Табличная</li>
-                            <li><strong>Дизайн:</strong> Цветовая схема на основе DarkSlateGray, Maroon</li>
-                            <li><strong>Интерактивные элементы:</strong> Гостевая книга, статус систем, бегущая строка</li>
-                        </ul>
-                        
-                        <p><strong>Статус систем (текущий):</strong></p>
-                        <ul>
-                            <li>ТЕНЕСКАН: ОНЛАЙН</li>
-                            <li>НОКСОМ: ВОССТАНОВЛЕНИЕ (отсылка к событиям 2010 г.)</li>
-                            <li>ГЛОССАРИЙ: ОНЛАЙН</li>
-                        </ul>
-                        
-                        <div class="alert">
-                            <strong>Внимание:</strong> Веб-ресурс временно недоступен для публичного доступа из-за проведения технических работ. Ожидаемое время восстановления: не определено.
+                        <div class="counter">
+                            Посещений: <span id="visit-counter">1347</span>
                         </div>
                     </div>
                 </div>
-                
-                <!-- Глоссарий -->
-                <div class="content-section" id="glossary">
-                    <div class="content-title">ГЛОССАРИЙ ТЕРМИНОВ</div>
-                    
-                    <div class="content-text">
-                        <p><strong>Аномалия:</strong> Общее название для любого объекта, явления или сущности, нарушающей известные законы природы и представляющей потенциальную угрозу.</p>
-                        
-                        <p><strong>Зона:</strong> Классифицированная территория, находящаяся под контролем или наблюдением ГНК КИППТ (напр., СА-01, СИ-08).</p>
-                        
-                        <p><strong>Контейнеризация:</strong> Процедура изоляции аномалии в специальные средства сдерживания.</p>
-                        
-                        <p><strong>Постколлапсные территории:</strong> Регионы мира, пострадавшие от неопределенного глобального катаклизма, где аномалии проявляются наиболее часто.</p>
-                        
-                        <p><strong>Протокол сдерживания:</strong> Установленный набор правил и процедур для безопасного взаимодействия с аномалией или её нейтрализации.</p>
-                        
-                        <p><strong>Сталкер:</strong> Гражданское лицо, незаконно проникающее на закрытые территории для добычи и продажи артефактов.</p>
-                    </div>
-                </div>
-                
-                <!-- Командная строка -->
-                <div class="command-line">
-                    <span class="command-prompt">ГНК://ФАНТОМ-ТЕРМИНАЛ/СИ-08&gt;</span>
-                    <input type="text" class="command-input" id="command-input" placeholder="Введите команду (help для справки)" autocomplete="off">
-                </div>
             </div>
-        </div>
-        
-        <div class="terminal-footer">
-            <div>ГНК КИППТ • ФАНТОМ-ТЕРМИНАЛ v2.1 • СИ-08</div>
-            <div>Текущее время: <span id="current-time">--:--:--</span> • Дата: <span id="current-date">--.--.----</span></div>
-            <div>Статус: <span class="blink">ОНЛАЙН</span></div>
+
+            <div class="footer">
+                © 2025 ГНК КИППТ :: "Наука. Контроль. Порядок." :: Система работает в штатном режиме
+                <br>Предупреждение: несанкционированный доступ карается в соответствии с Уставом ГНК
+            </div>
         </div>
     </div>
 
     <script>
-        // Инициализация при загрузке страницы
-        document.addEventListener('DOMContentLoaded', function() {
-            // Запуск экрана загрузки
-            setTimeout(function() {
-                document.getElementById('boot-screen').style.display = 'none';
+        // Загрузочные фразы
+        const bootPhrases = [
+            "SUN IS DEAD",
+            "GRAVE IS FULL", 
+            "YOU IS FUEL"
+        ];
+        
+        // Статусы загрузки
+        const bootStatuses = [
+            "Загрузка ядра системы...",
+            "Инициализация модуля ТЕНЕСКАН...",
+            "Проверка подключения к ГЛОССАРИЮ...",
+            "Активация протоколов безопасности...",
+            "Загрузка данных о персонале...",
+            "Контроль аномалий в зоне СИ-08...",
+            "Загрузка интерфейса ФАНТОМ-ТЕРМИНАЛА...",
+            "Система готова к работе"
+        ];
+        
+        let currentStatusIndex = 0;
+        let progress = 0;
+        
+        // Показать загрузочную фразу с эффектами
+        function showBootPhrase(phraseIndex, lineElement) {
+            return new Promise(resolve => {
+                const phrase = bootPhrases[phraseIndex];
+                const chars = phrase.split('');
+                let i = 0;
+                
+                function typeNextChar() {
+                    if (i < chars.length) {
+                        // Случайная задержка для эффекта "лагающего" терминала
+                        let delay = Math.random() * 100 + 50;
+                        
+                        // Иногда добавляем дополнительный лаг
+                        if (Math.random() < 0.1) {
+                            delay += Math.random() * 200 + 100;
+                        }
+                        
+                        setTimeout(() => {
+                            lineElement.textContent += chars[i];
+                            i++;
+                            typeNextChar();
+                        }, delay);
+                    } else {
+                        // Добавляем глитч-эффект после завершения набора
+                        setTimeout(() => {
+                            // Применяем разные эффекты глитча для каждой строки
+                            if (phraseIndex === 0) {
+                                lineElement.classList.add('glitch-effect');
+                                lineElement.style.animationName = 'glitch1';
+                            } else if (phraseIndex === 1) {
+                                lineElement.classList.add('glitch-effect');
+                                lineElement.style.animationName = 'glitch2';
+                            } else {
+                                lineElement.classList.add('glitch-effect');
+                                lineElement.style.animationName = 'glitch3';
+                            }
+                            
+                            // Убираем эффект после завершения анимации
+                            setTimeout(() => {
+                                lineElement.classList.remove('glitch-effect');
+                                lineElement.style.animationName = '';
+                                resolve();
+                            }, 300);
+                        }, 300);
+                    }
+                }
+                
+                typeNextChar();
+            });
+        }
+        
+        // Обновление прогресса
+        function updateProgress() {
+            if (progress >= 100) return;
+            
+            // Нелинейное увеличение прогресса для реалистичности
+            let increment;
+            if (progress < 30) {
+                increment = Math.floor(Math.random() * 5) + 2;
+            } else if (progress < 70) {
+                increment = Math.floor(Math.random() * 3) + 1;
+            } else {
+                increment = Math.floor(Math.random() * 2) + 1;
+            }
+            
+            progress = Math.min(progress + increment, 100);
+            
+            document.getElementById('status-fill').style.width = `${progress}%`;
+            document.getElementById('boot-progress').textContent = `${progress}%`;
+            
+            // Обновляем текст статуса
+            if (progress < 100) {
+                const nextStatusIndex = Math.floor((progress / 100) * bootStatuses.length);
+                if (nextStatusIndex > currentStatusIndex && nextStatusIndex < bootStatuses.length) {
+                    currentStatusIndex = nextStatusIndex;
+                    document.getElementById('boot-status-text').textContent = bootStatuses[currentStatusIndex];
+                }
+                
+                setTimeout(updateProgress, Math.random() * 200 + 100);
+            } else {
+                document.getElementById('boot-status-text').textContent = "Система готова к работе";
+                setTimeout(finalizeBoot, 1500);
+            }
+        }
+        
+        // Завершение загрузки
+        function finalizeBoot() {
+            const bootScreen = document.getElementById('boot-screen');
+            bootScreen.style.opacity = '0';
+            setTimeout(() => {
+                bootScreen.style.display = 'none';
                 document.getElementById('terminal').style.display = 'block';
-                document.getElementById('scanline').style.display = 'block';
+                startTerminalEffects();
                 
-                // Обновление времени
-                updateDateTime();
-                setInterval(updateDateTime, 1000);
-                
-                // Фокус на поле ввода команд
-                document.getElementById('command-input').focus();
-            }, 9000); // Загрузка длится 9 секунд
+                // Имитация увеличения счетчика посещений
+                let visitCount = 1347;
+                setInterval(() => {
+                    visitCount++;
+                    document.getElementById('visit-counter').textContent = visitCount;
+                }, 5000);
+            }, 500);
+        }
+        
+        // Основная функция загрузки системы
+        async function bootSystem() {
+            const line1 = document.getElementById('phrase-line1');
+            const line2 = document.getElementById('phrase-line2');
+            const line3 = document.getElementById('phrase-line3');
             
-            // Навигация по меню
-            const menuItems = document.querySelectorAll('.menu-item');
-            const contentSections = document.querySelectorAll('.content-section');
+            // Показываем фразы последовательно
+            line1.classList.add('fade-in-up');
+            await showBootPhrase(0, line1);
             
-            menuItems.forEach(item => {
-                item.addEventListener('click', function() {
-                    // Убираем активный класс у всех пунктов меню
-                    menuItems.forEach(i => i.classList.remove('active'));
-                    
-                    // Добавляем активный класс текущему пункту
-                    this.classList.add('active');
-                    
-                    // Скрываем все секции контента
-                    contentSections.forEach(section => section.classList.remove('active'));
-                    
-                    // Показываем выбранную секцию
-                    const sectionId = this.getAttribute('data-section');
-                    document.getElementById(sectionId).classList.add('active');
-                    
-                    // Фокус на поле ввода команд
-                    document.getElementById('command-input').focus();
-                });
-            });
+            await new Promise(resolve => setTimeout(resolve, 500));
             
-            // Обработка командной строки
-            const commandInput = document.getElementById('command-input');
+            line2.classList.add('fade-in-up');
+            await showBootPhrase(1, line2);
             
-            commandInput.addEventListener('keyup', function(event) {
-                if (event.key === 'Enter') {
-                    const command = this.value.trim().toLowerCase();
-                    this.value = '';
-                    
-                    // Обработка команд
-                    switch(command) {
-                        case 'help':
-                            alert('Доступные команды:\n\n' +
-                                  'help - показать эту справку\n' +
-                                  'clear - очистить терминал\n' +
-                                  'report - перейти к сводному отчету\n' +
-                                  'anomalies - перейти к классификации аномалий\n' +
-                                  'chronology - перейти к хронологии событий\n' +
-                                  'structure - перейти к организационной структуре\n' +
-                                  'nokvist - перейти к информации о Ноквистском филиале\n' +
-                                  'glossary - перейти к глоссарию терминов\n' +
-                                  'scan - запустить диагностику систем\n' +
-                                  'reboot - перезагрузить терминал');
-                            break;
-                            
-                        case 'clear':
-                            const contentElement = document.querySelector('.terminal-content');
-                            contentElement.innerHTML = '<div class="content-section active" id="main-report"><div class="content-title">ТЕРМИНАЛ ОЧИЩЕН</div><div class="content-text">Введите команду для продолжения работы. Используйте команду "help" для получения списка доступных команд.</div></div>';
-                            
-                            // Добавляем обратно командную строку
-                            const commandLine = document.createElement('div');
-                            commandLine.className = 'command-line';
-                            commandLine.innerHTML = '<span class="command-prompt">ГНК://ФАНТОМ-ТЕРМИНАЛ/СИ-08&gt;</span><input type="text" class="command-input" id="command-input" placeholder="Введите команду (help для справки)" autocomplete="off">';
-                            contentElement.appendChild(commandLine);
-                            
-                            // Перепривязываем обработчик событий
-                            document.getElementById('command-input').addEventListener('keyup', commandInputHandler);
-                            document.getElementById('command-input').focus();
-                            break;
-                            
-                        case 'report':
-                            switchSection('main-report');
-                            break;
-                            
-                        case 'anomalies':
-                            switchSection('anomalies');
-                            break;
-                            
-                        case 'chronology':
-                            switchSection('chronology');
-                            break;
-                            
-                        case 'structure':
-                            switchSection('structure');
-                            break;
-                            
-                        case 'nokvist':
-                            switchSection('nokvist');
-                            break;
-                            
-                        case 'glossary':
-                            switchSection('glossary');
-                            break;
-                            
-                        case 'scan':
-                            alert('Запуск диагностики систем...\n\n' +
-                                  'ТЕНЕСКАН: ОНЛАЙН (стабильно)\n' +
-                                  'НОКСОМ: ВОССТАНОВЛЕНИЕ (72%)\n' +
-                                  'ГЛОССАРИЙ: ОНЛАЙН (стабильно)\n' +
-                                  'ЭРЕБ-7: ОНЛАЙН (стабильно)\n' +
-                                  'ФАНТОМ-ТЕРМИНАЛ: ОНЛАЙН (стабильно)\n\n' +
-                                  'Диагностика завершена. Критических ошибок не обнаружено.');
-                            break;
-                            
-                        case 'reboot':
-                            if (confirm('Вы уверены, что хотите перезагрузить терминал? Весь несохраненный прогресс будет потерян.')) {
-                                location.reload();
-                            }
-                            break;
-                            
-                        case '':
-                            // Пустая команда - ничего не делать
-                            break;
-                            
-                        default:
-                            alert(`Неизвестная команда: "${command}". Введите "help" для получения списка доступных команд.`);
-                    }
-                }
-            });
+            await new Promise(resolve => setTimeout(resolve, 500));
             
-            // Функция переключения секций
-            function switchSection(sectionId) {
-                // Убираем активный класс у всех пунктов меню
-                menuItems.forEach(i => i.classList.remove('active'));
-                
-                // Добавляем активный класс соответствующему пункту меню
-                document.querySelector(`.menu-item[data-section="${sectionId}"]`).classList.add('active');
-                
-                // Скрываем все секции контента
-                contentSections.forEach(section => section.classList.remove('active'));
-                
-                // Показываем выбранную секцию
-                document.getElementById(sectionId).classList.add('active');
-            }
+            line3.classList.add('fade-in-up');
+            await showBootPhrase(2, line3);
             
-            // Обработчик для перепривязанного поля ввода
-            function commandInputHandler(event) {
-                if (event.key === 'Enter') {
-                    const command = this.value.trim().toLowerCase();
-                    this.value = '';
-                    
-                    // Обработка команд (аналогично выше)
-                    switch(command) {
-                        case 'help':
-                            alert('Доступные команды:\n\n' +
-                                  'help - показать эту справку\n' +
-                                  'clear - очистить терминал\n' +
-                                  'report - перейти к сводному отчету\n' +
-                                  'anomalies - перейти к классификации аномалий\n' +
-                                  'chronology - перейти к хронологии событий\n' +
-                                  'structure - перейти к организационной структуре\n' +
-                                  'nokvist - перейти к информации о Ноквистском филиале\n' +
-                                  'glossary - перейти к глоссарию терминов\n' +
-                                  'scan - запустить диагностику систем\n' +
-                                  'reboot - перезагрузить терминал');
-                            break;
-                            
-                        case 'clear':
-                            const contentElement = document.querySelector('.terminal-content');
-                            contentElement.innerHTML = '<div class="content-section active" id="main-report"><div class="content-title">ТЕРМИНАЛ ОЧИЩЕН</div><div class="content-text">Введите команду для продолжения работы. Используйте команду "help" для получения списка доступных команд.</div></div>';
-                            
-                            const commandLine = document.createElement('div');
-                            commandLine.className = 'command-line';
-                            commandLine.innerHTML = '<span class="command-prompt">ГНК://ФАНТОМ-ТЕРМИНАЛ/СИ-08&gt;</span><input type="text" class="command-input" id="command-input" placeholder="Введите команду (help для справки)" autocomplete="off">';
-                            contentElement.appendChild(commandLine);
-                            
-                            document.getElementById('command-input').addEventListener('keyup', commandInputHandler);
-                            document.getElementById('command-input').focus();
-                            break;
-                            
-                        case 'report':
-                            switchSection('main-report');
-                            break;
-                            
-                        case 'anomalies':
-                            switchSection('anomalies');
-                            break;
-                            
-                        case 'chronology':
-                            switchSection('chronology');
-                            break;
-                            
-                        case 'structure':
-                            switchSection('structure');
-                            break;
-                            
-                        case 'nokvist':
-                            switchSection('nokvist');
-                            break;
-                            
-                        case 'glossary':
-                            switchSection('glossary');
-                            break;
-                            
-                        case 'scan':
-                            alert('Запуск диагностики систем...\n\n' +
-                                  'ТЕНЕСКАН: ОНЛАЙН (стабильно)\n' +
-                                  'НОКСОМ: ВОССТАНОВЛЕНИЕ (72%)\n' +
-                                  'ГЛОССАРИЙ: ОНЛАЙН (стабильно)\n' +
-                                  'ЭРЕБ-7: ОНЛАЙН (стабильно)\n' +
-                                  'ФАНТОМ-ТЕРМИНАЛ: ОНЛАЙН (стабильно)\n\n' +
-                                  'Диагностика завершена. Критических ошибок не обнаружено.');
-                            break;
-                            
-                        case 'reboot':
-                            if (confirm('Вы уверены, что хотите перезагрузить терминал? Весь несохраненный прогресс будет потерян.')) {
-                                location.reload();
-                            }
-                            break;
-                            
-                        case '':
-                            break;
-                            
-                        default:
-                            alert(`Неизвестная команда: "${command}". Введите "help" для получения списка доступных команд.`);
-                    }
-                }
-            }
-            
-            // Обновление даты и времени
-            function updateDateTime() {
+            // Начинаем прогресс загрузки
+            setTimeout(updateProgress, 1000);
+        }
+        
+        // Эффекты терминала
+        function startTerminalEffects() {
+            // Обновление времени
+            function updateTime() {
                 const now = new Date();
-                const timeString = now.toLocaleTimeString('ru-RU');
-                const dateString = now.toLocaleDateString('ru-RU');
-                
-                document.getElementById('current-time').textContent = timeString;
-                document.getElementById('current-date').textContent = dateString;
+                const hours = now.getHours().toString().padStart(2, '0');
+                const minutes = now.getMinutes().toString().padStart(2, '0');
+                document.getElementById('current-time').textContent = `${hours}:${minutes}`;
+                setTimeout(updateTime, 60000);
             }
+            updateTime();
             
-            // Случайные эффекты глитча
+            // Мерцание для аутентичности
             setInterval(() => {
-                if (Math.random() < 0.05) {
-                    const glitch = document.querySelector('.glitch');
-                    glitch.style.opacity = '0.3';
+                const terminal = document.getElementById('terminal');
+                if (Math.random() > 0.95) {
+                    terminal.style.opacity = '0.97';
                     setTimeout(() => {
-                        glitch.style.opacity = '0.1';
-                    }, 100);
+                        terminal.style.opacity = '1';
+                    }, 60);
                 }
-            }, 1000);
+            }, 2000);
+        }
+        
+        // Обработка формы гостевой книги
+        document.getElementById('guestbook-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = this[0].value.trim();
+            const message = this[1].value.trim();
+            const now = new Date();
+            
+            // Форматирование времени
+            const dateStr = `${now.getDate().toString().padStart(2, '0')}.${(now.getMonth()+1).toString().padStart(2, '0')}.${now.getFullYear()}`;
+            const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+            
+            // Создание новой записи
+            const entry = document.createElement('div');
+            entry.className = 'guestbook-entry';
+            entry.innerHTML = `
+                <strong>[${name.toUpperCase() || 'ГОСТЬ'}]</strong> <span class="timestamp">${dateStr} ${timeStr}</span><br>
+                ${message.replace(/</g, '&lt;').replace(/>/g, '&gt;')}
+            `;
+            
+            // Добавляем в начало списка
+            const entriesContainer = document.getElementById('guestbook-entries');
+            entriesContainer.insertBefore(entry, entriesContainer.firstChild);
+            
+            // Очистка формы
+            this[0].value = '';
+            this[1].value = '';
+            
+            // Прокрутка к новой записи
+            setTimeout(() => {
+                entry.scrollIntoView({behavior: 'smooth', block: 'nearest'});
+            }, 100);
+        });
+        
+        // Запуск загрузки при загрузке страницы
+        window.addEventListener('load', () => {
+            // Небольшая задержка для плавного старта
+            setTimeout(bootSystem, 500);
         });
     </script>
 </body>
-</html>
+    </html>
