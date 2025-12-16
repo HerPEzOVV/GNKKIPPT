@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Фантом-Терминал ГНК КИППТ</title>
+    <style>
+        :root {
+            --primary-blue: #0A1A2F;
+            --secondary-blue: #0d2b4f;
+            --accent-blue: #1a5fb4;
+            --highlight-blue: #62a0ea;
+            --text-blue: #c0d5f7;
+            --terminal-green: #00ff00;
+            --terminal-red: #ff5555;
+            --terminal-yellow: #f1fa8c;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Courier New', monospace;
+        }
+        
+        body {
+            background-color: #000;
+            color: var(--text-blue);
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        /* ЭКРАН ЗАГРУЗКИ */
+        #boot-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .boot-text {
+            color: var(--highlight-blue);
+            font-size: 1.2rem;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            text-shadow: 0 0 5px var(--accent-blue);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .boot-line {
+            opacity: 0;
+            animation: typewriter 0.1s forwards;
+            margin-bottom: 10px;
+        }
+        
+        .boot-line:nth-child(1) { animation-delay: 0.5s; }
+        .boot-line:nth-child(2) { animation-delay: 1s; }
+        .boot-line:nth-child(3) { animation-delay: 1.5s; }
+        .boot-line:nth-child(4) { animation-delay: 2s; }
+        .boot-line:nth-child(5) { animation-delay: 2.5s; }
+        .boot-line:nth-child(6) { animation-delay: 3s; }
+        .boot-line:nth-child(7) { animation-delay: 3.5s; }
+        .boot-line:nth-child(8) { animation-delay: 4s; }
+        .boot-line:nth-child(9) { animation-delay: 4.5s; }
+        .boot-line:nth-child(10) { animation-delay: 5s; }
+        .boot-line:nth-child(11) { animation-delay: 5.5s; }
+        .boot-line:nth-child(12) { animation-delay: 6s; }
+        .boot-line:nth-child(13) { animation-delay: 6.5s; }
+        .boot-line:nth-child(14) { animation-delay: 7s; }
+        .boot-line:nth-child(15) { animation-delay: 7.5s; }
+        .boot-line:nth-child(16) { animation-delay: 8s; }
+        .boot-line:nth-child(17) { animation-delay: 8.5s; }
+        
+        @keyframes typewriter {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .boot-logo {
+            margin-top: 30px;
+            font-size: 3rem;
+            color: var(--accent-blue);
+            text-align: center;
+            text-shadow: 0 0 10px var(--highlight-blue);
+            line-height: 1.2;
+        }
+        
+        .boot-progress {
+            width: 400px;
+            height: 3px;
+            background-color: var(--secondary-blue);
+            margin-top: 40px;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        
+        .boot-progress-bar {
+            height: 100%;
+            width: 0%;
+            background-color: var(--highlight-blue);
+            animation: boot-progress 9s ease-in-out forwards;
+        }
+        
+        @keyframes boot-progress {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+        
+        /* ОСНОВНОЙ ТЕРМИНАЛ */
+        #terminal {
+            display: none;
+            width: 100%;
+            height: 100vh;
+            background-color: var(--primary-blue);
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .terminal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--accent-blue);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .terminal-title {
+            color: var(--highlight-blue);
+            font-size: 1.8rem;
+            text-shadow: 0 0 5px var(--accent-blue);
+        }
+        
+        .terminal-subtitle {
+            color: var(--text-blue);
+            font-size: 1rem;
+        }
+        
+        .terminal-status {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        
+        .status-online {
+            background-color: var(--terminal-green);
+            box-shadow: 0 0 5px var(--terminal-green);
+        }
+        
+        .status-recovery {
+            background-color: var(--terminal-yellow);
+            box-shadow: 0 0 5px var(--terminal-yellow);
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .terminal-body {
+            display: flex;
+            height: calc(100vh - 150px);
+            gap: 20px;
+        }
+        
+        .terminal-sidebar {
+            width: 250px;
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 5px;
+            padding: 15px;
+            border: 1px solid var(--accent-blue);
+        }
+        
+        .sidebar-title {
+            color: var(--highlight-blue);
+            border-bottom: 1px solid var(--accent-blue);
+            padding-bottom: 5px;
+            margin-bottom: 15px;
+        }
+        
+        .menu-item {
+            padding: 10px;
+            margin-bottom: 8px;
+            background-color: rgba(26, 95, 180, 0.1);
+            border-left: 3px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .menu-item:hover {
+            background-color: rgba(26, 95, 180, 0.3);
+            border-left: 3px solid var(--highlight-blue);
+        }
+        
+        .menu-item.active {
+            background-color: rgba(26, 95, 180, 0.4);
+            border-left: 3px solid var(--highlight-blue);
+        }
+        
+        .terminal-content {
+            flex: 1;
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 5px;
+            padding: 20px;
+            overflow-y: auto;
+            border: 1px solid var(--accent-blue);
+        }
+        
+        .content-section {
+            display: none;
+        }
+        
+        .content-section.active {
+            display: block;
+        }
+        
+        .content-title {
+            color: var(--highlight-blue);
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--accent-blue);
+            padding-bottom: 5px;
+        }
+        
+        .content-text {
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        
+        .anomaly-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .anomaly-card {
+            background-color: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--accent-blue);
+            border-radius: 5px;
+            padding: 15px;
+            transition: all 0.3s;
+        }
+        
+        .anomaly-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(26, 95, 180, 0.3);
+        }
+        
+        .anomaly-code {
+            color: var(--terminal-yellow);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .anomaly-name {
+            color: var(--highlight-blue);
+            margin: 8px 0;
+        }
+        
+        .anomaly-desc {
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+        
+        .alert {
+            background-color: rgba(139, 0, 0, 0.2);
+            border: 1px solid #8B0000;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+        
+        .command-line {
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            border: 1px solid var(--accent-blue);
+        }
+        
+        .command-prompt {
+            color: var(--terminal-green);
+            margin-right: 10px;
+        }
+        
+        .command-input {
+            background: transparent;
+            border: none;
+            color: var(--text-blue);
+            font-size: 1rem;
+            width: calc(100% - 100px);
+            outline: none;
+        }
+        
+        .glitch {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                rgba(10, 26, 47, 0.1) 50%,
+                rgba(26, 95, 180, 0.1) 50%
+            );
+            background-size: 100% 4px;
+            z-index: -1;
+            opacity: 0.1;
+            pointer-events: none;
+        }
+        
+        .scanline {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: rgba(98, 160, 234, 0.5);
+            box-shadow: 0 0 10px rgba(98, 160, 234, 0.7);
+            z-index: 999;
+            animation: scan 8s linear infinite;
+            display: none;
+        }
+        
+        @keyframes scan {
+            0% { top: 0%; }
+            100% { top: 100%; }
+        }
+        
+        .terminal-footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 10px 20px;
+            background-color: rgba(0, 0, 0, 0.5);
+            border-top: 1px solid var(--accent-blue);
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+        }
+        
+        .blink {
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+        
+        /* АДАПТИВНОСТЬ */
+        @media (max-width: 900px) {
+            .terminal-body {
+                flex-direction: column;
+                height: calc(100vh - 200px);
+            }
+            
+            .terminal-sidebar {
+                width: 100%;
+                height: auto;
+            }
+            
+            .anomaly-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .boot-text {
+                font-size: 1rem;
+            }
+            
+            .boot-logo {
+                font-size: 2rem;
+            }
+            
+            .boot-progress {
+                width: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ЭКРАН ЗАГРУЗКИ -->
+    <div id="boot-screen">
+        <div class="boot-text">
+            <div class="boot-line">ИНИЦИАЛИЗАЦИЯ СИСТЕМЫ ГНК КИППТ...</div>
+            <div class="boot-line">ПРОВЕРКА ЦЕЛОСТНОСТИ ЯДРА...</div>
+            <div class="boot-line">ЗАГРУЗКА ПРОТОКОЛОВ СДЕРЖИВАНИЯ...</div>
+            <div class="boot-line">ПОДКЛЮЧЕНИЕ К ТЕНЕСКАН... УСПЕХ</div>
+            <div class="boot-line">ПОДКЛЮЧЕНИЕ К НОКСОМ... ОШИБКА (ВОССТАНОВЛЕНИЕ)</div>
+            <div class="boot-line">ПОДКЛЮЧЕНИЕ К ГЛОССАРИЙ... УСПЕХ</div>
+            <div class="boot-line">ИНИЦИАЛИЗАЦИЯ ЭРЕБ-7... ВЫПОЛНЕНО</div>
+            <div class="boot-line">ЗАГРУЗКА БАЗЫ АНОМАЛИЙ...</div>
+            <div class="boot-line">ПРОВЕРКА ПРОТОКОЛОВ БЕЗОПАСНОСТИ...</div>
+            <div class="boot-line">ИНИЦИАЛИЗАЦИЯ ФАНТОМ-ТЕРМИНАЛА...</div>
+            <div class="boot-line">СИНХРОНИЗАЦИЯ С ЦЕНТРАЛЬНЫМ СЕРВЕРОМ...</div>
+            <div class="boot-line">ПРОВЕРКА УРОВНЯ ДОСТУПА... ДОСТУП ПОДТВЕРЖДЕН</div>
+            <div class="boot-line">ЗАГРУЗКА ДАННЫХ О ПОСТКОЛЛАПСНЫХ ТЕРРИТОРИЯХ...</div>
+            <div class="boot-line">ПОДГОТОВКА ОТЧЕТА ПО ИНИЦИАТИВЕ КИППТ...</div>
+            <div class="boot-line">СИСТЕМА ГОТОВА К ИСПОЛЬЗОВАНИЮ</div>
+        </div>
+        
+        <div class="boot-logo">
+            ГОСУДАРСТВЕННО-НАУЧНАЯ КОРПОРАЦИЯ<br>
+            <span style="font-size: 2.5rem; color: var(--highlight-blue)">КИППТ</span>
+        </div>
+        
+        <div class="boot-progress">
+            <div class="boot-progress-bar"></div>
+        </div>
+    </div>
+    
+    <!-- ОСНОВНОЙ ТЕРМИНАЛ -->
+    <div id="terminal">
+        <div class="glitch"></div>
+        <div class="scanline" id="scanline"></div>
+        
+        <div class="terminal-header">
+            <div>
+                <div class="terminal-title">ФАНТОМ-ТЕРМИНАЛ v2.1</div>
+                <div class="terminal-subtitle">ГНК КИППТ • Уровень доступа: 4 • СИ-08</div>
+            </div>
+            <div class="terminal-status">
+                <div class="status-item">
+                    <div class="status-indicator status-online"></div>
+                    <span>ТЕНЕСКАН</span>
+                </div>
+                <div class="status-item">
+                    <div class="status-indicator status-recovery"></div>
+                    <span>НОКСОМ</span>
+                </div>
+                <div class="status-item">
+                    <div class="status-indicator status-online"></div>
+                    <span>ГЛОССАРИЙ</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="terminal-body">
+            <div class="terminal-sidebar">
+                <div class="sidebar-title">НАВИГАЦИЯ</div>
+                <div class="menu-item active" data-section="main-report">Сводный отчет КИППТ</div>
+                <div class="menu-item" data-section="anomalies">Классификация аномалий</div>
+                <div class="menu-item" data-section="chronology">Хронология 2010 года</div>
+                <div class="menu-item" data-section="structure">Оргструктура ГНК</div>
+                <div class="menu-item" data-section="nokvist">Ноквистский филиал</div>
+                <div class="menu-item" data-section="glossary">Глоссарий терминов</div>
+            </div>
+            
+            <div class="terminal-content">
+                <!-- Сводный отчет -->
+                <div class="content-section active" id="main-report">
+                    <div class="content-title">СВОДНЫЙ ОТЧЁТ ПО ИНИЦИАТИВЕ «КИППТ»</div>
+                    <div class="alert">
+                        <strong>Классификация:</strong> ДЛЯ СЛУЖЕБНОГО ПОЛЬЗОВАНИЯ<br>
+                        <strong>Дата экспорта:</strong> Текущая<br>
+                        <strong>Статус:</strong> Концептуальное моделирование завершено. Сеттинг стабилен.
+                    </div>
+                    
+                    <div class="content-text">
+                        <p><strong>Государственно-Научная Корпорация Контроля, Исследования и Поддержания Порядка на Постколлапсных Территориях (ГНК КИППТ)</strong> является основной структурой, ответственной за управление аномальными явлениями после глобального коллапса.</p>
+                        
+                        <p><strong>Миссия:</strong> Управление, изучение и сдерживание аномалий, возникших после неопределенного глобального коллапса ("Постколлапс").</p>
+                        
+                        <p><strong>Девизы:</strong></p>
+                        <ul>
+                            <li><strong>Официальный:</strong> «Наука. Контроль. Порядок.»</li>
+                            <li><strong>Внутренний:</strong> «Тьма – наш дом. Аномалии – наш объект изучения.»</li>
+                            <li><strong>Пропагандистский:</strong> «Выживание через регулирование.»</li>
+                        </ul>
+                        
+                        <p>Система функционирует на основе пяти основных подразделений, каждое из которых отвечает за свой сектор деятельности по контролю и исследованию аномалий.</p>
+                    </div>
+                </div>
+                
+                <!-- Классификация аномалий -->
+                <div class="content-section" id="anomalies">
+                    <div class="content-title">СИСТЕМА КЛАССИФИКАЦИИ АНОМАЛИЙ (Редакция 1.2)</div>
+                    
+                    <div class="content-text">
+                        <p><strong>Формат кода:</strong> ТИП-ПОДКАТЕГОРИЯ-СВОЙСТВО-НОМЕР</p>
+                        
+                        <p><strong>Базовые типы (ТИП):</strong></p>
+                        <ul>
+                            <li><strong>ПР:</strong> Пространственные (нарушение законов физики)</li>
+                            <li><strong>БИО:</strong> Биологические (мутировавшая флора/фауна)</li>
+                            <li><strong>ПСИ:</strong> Психотропные (влияние на сознание)</li>
+                            <li><strong>ХР:</strong> Хроноаномалии (искажение времени)</li>
+                            <li><strong>АРТ:</strong> Артефакты (аномальные объекты)</li>
+                            <li><strong>ТК:</strong> Техногенные (остатки технологий)</li>
+                            <li><strong>РФ:</strong> Реликт-фантомы (призраки исчезнувших городов/государств)</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="anomaly-grid">
+                        <div class="anomaly-card">
+                            <div class="anomaly-code">ТК-Я-Х-47</div>
+                            <div class="anomaly-name">«Радио "Голос Мёртвых"»</div>
+                            <div class="anomaly-desc">Техногенная аномалия ядерной эры, активирующаяся ночью. Транслирует сообщения на частотах, которых не должно существовать.</div>
+                        </div>
+                        
+                        <div class="anomaly-card">
+                            <div class="anomaly-code">РФ-Д-Х-198</div>
+                            <div class="anomaly-name">«Тени Статуи Свободы»</div>
+                            <div class="anomaly-desc">Динамические реликт-фантомы в зоне Нью-Йорка. Проявляются при определённых атмосферных условиях.</div>
+                        </div>
+                        
+                        <div class="anomaly-card">
+                            <div class="anomaly-code">ХИ-С-Н-901</div>
+                            <div class="anomaly-name">«Красный снег»</div>
+                            <div class="anomaly-desc">Статичная химическая аномалия в Сибири, вызывающая ожоги и галлюцинации при контакте.</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Хронология -->
+                <div class="content-section" id="chronology">
+                    <div class="content-title">ХРОНОЛОГИЯ КЛЮЧЕВЫХ СОБЫТИЙ 2010 ГОДА</div>
+                    
+                    <div class="content-text">
+                        <p><strong>«Дело о сбитом самолёте» (Январь-Март)</strong></p>
+                        <p>Частный самолёт нарушает воздушное пространство зоны СИ-08 (Забайкалье) и разбивается под воздействием новой аномалии ХИ-С-Р-112 («Стеклянный ветер»). Проведена зачистка ОСО, классификация аномалии, кампания дезинформации от БИК.</p>
+                        
+                        <p><strong>«Бунт в посёлке 12-Г» (Апрель-Июнь)</strong></p>
+                        <p>Бунт сотрудников низшего звена из-за задержек зарплаты на станции ГНК в Красноярском крае. Подавлен силами УПП с использованием психотропного генератора ПСИ-С-М-055 («Эхо спокойствия»).</p>
+                        
+                        <p><strong>«Инцидент с партией сталкеров» (Июль-Сентябрь)</strong></p>
+                        <p>Гражданские мародёры похищают артефакты на периметре зоны УР-09 (Южный Урал). Операция ОСО «Возмездие» с ликвидацией сталкеров аномальным артефактом.</p>
+                        
+                        <p><strong>«Кризис системы НОКСОМ» (Октябрь-Декабрь)</strong></p>
+                        <p>Масштабный 72-часовой сбой системы управления «НОКСОМ» из-за активации латентной меметической аномалии ТК-М-Л-33 («Червь сновидений»), годами паразитировавшей в системе. Унизительное восстановление по бумажным архивам.</p>
+                    </div>
+                </div>
+                
+                <!-- Оргструктура -->
+                <div class="content-section" id="structure">
+                    <div class="content-title">ОРГАНИЗАЦИОННАЯ СТРУКТУРА И ТЕХНОЛОГИИ</div>
+                    
+                    <div class="content-text">
+                        <p><strong>Подразделения ГНК КИППТ:</strong></p>
+                        <ul>
+                            <li><strong>ДАИ</strong> (Департамент Аномальных Исследований): Фундаментальная наука и классификация.</li>
+                            <li><strong>УПП</strong> (Управление Постколлапсного Порядка): Военизированная жандармерия и контроль населения.</li>
+                            <li><strong>ЦКТ</strong> (Центр Ксенотехнологий): Прикладные разработки на основе аномалий.</li>
+                            <li><strong>БИК</strong> (Бюро Информационного Контроля): Пропаганда, цензура, управление данными.</li>
+                            <li><strong>ОСО</strong> (Отдел Специальных Операций): Скрытые зачистки и ликвидации.</li>
+                        </ul>
+                        
+                        <p><strong>Программно-аппаратные комплексы (ПО):</strong></p>
+                        <ul>
+                            <li><strong>«ТЕНЕСКАН»:</strong> Система мониторинга и обнаружения угроз.</li>
+                            <li><strong>«НОКСОМ»:</strong> Операционная платформа для управления ресурсами и логистики.</li>
+                            <li><strong>«ГЛОССАРИЙ»:</strong> Централизованная база данных аномалий и протоколов сдерживания.</li>
+                            <li><strong>«ЭРЕБ-7»:</strong> Искусственный интеллект для анализа социума и прогнозирования беспорядков.</li>
+                            <li><strong>«ФАНТОМ-ТЕРМИНАЛ»:</strong> Полевой интерфейс для оперативного доступа агентов к данным.</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Ноквистский филиал -->
+                <div class="content-section" id="nokvist">
+                    <div class="content-title">ВЕБ-РЕСУРС НОКВИСТСКОГО ФИЛИАЛА (СИ-08)</div>
+                    
+                    <div class="content-text">
+                        <p><strong>Цель:</strong> Информационный фронтенд для населения и сотрудников. Маскировка реальной деятельности под «экологический мониторинг».</p>
+                        
+                        <p><strong>Технические характеристики (аутентичные для эпохи 2000-2010-х):</strong></p>
+                        <ul>
+                            <li><strong>Кодировка:</strong> UTF-8</li>
+                            <li><strong>Вёрстка:</strong> Табличная</li>
+                            <li><strong>Дизайн:</strong> Цветовая схема на основе DarkSlateGray, Maroon</li>
+                            <li><strong>Интерактивные элементы:</strong> Гостевая книга, статус систем, бегущая строка</li>
+                        </ul>
+                        
+                        <p><strong>Статус систем (текущий):</strong></p>
+                        <ul>
+                            <li>ТЕНЕСКАН: ОНЛАЙН</li>
+                            <li>НОКСОМ: ВОССТАНОВЛЕНИЕ (отсылка к событиям 2010 г.)</li>
+                            <li>ГЛОССАРИЙ: ОНЛАЙН</li>
+                        </ul>
+                        
+                        <div class="alert">
+                            <strong>Внимание:</strong> Веб-ресурс временно недоступен для публичного доступа из-за проведения технических работ. Ожидаемое время восстановления: не определено.
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Глоссарий -->
+                <div class="content-section" id="glossary">
+                    <div class="content-title">ГЛОССАРИЙ ТЕРМИНОВ</div>
+                    
+                    <div class="content-text">
+                        <p><strong>Аномалия:</strong> Общее название для любого объекта, явления или сущности, нарушающей известные законы природы и представляющей потенциальную угрозу.</p>
+                        
+                        <p><strong>Зона:</strong> Классифицированная территория, находящаяся под контролем или наблюдением ГНК КИППТ (напр., СА-01, СИ-08).</p>
+                        
+                        <p><strong>Контейнеризация:</strong> Процедура изоляции аномалии в специальные средства сдерживания.</p>
+                        
+                        <p><strong>Постколлапсные территории:</strong> Регионы мира, пострадавшие от неопределенного глобального катаклизма, где аномалии проявляются наиболее часто.</p>
+                        
+                        <p><strong>Протокол сдерживания:</strong> Установленный набор правил и процедур для безопасного взаимодействия с аномалией или её нейтрализации.</p>
+                        
+                        <p><strong>Сталкер:</strong> Гражданское лицо, незаконно проникающее на закрытые территории для добычи и продажи артефактов.</p>
+                    </div>
+                </div>
+                
+                <!-- Командная строка -->
+                <div class="command-line">
+                    <span class="command-prompt">ГНК://ФАНТОМ-ТЕРМИНАЛ/СИ-08&gt;</span>
+                    <input type="text" class="command-input" id="command-input" placeholder="Введите команду (help для справки)" autocomplete="off">
+                </div>
+            </div>
+        </div>
+        
+        <div class="terminal-footer">
+            <div>ГНК КИППТ • ФАНТОМ-ТЕРМИНАЛ v2.1 • СИ-08</div>
+            <div>Текущее время: <span id="current-time">--:--:--</span> • Дата: <span id="current-date">--.--.----</span></div>
+            <div>Статус: <span class="blink">ОНЛАЙН</span></div>
+        </div>
+    </div>
+
+    <script>
+        // Инициализация при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            // Запуск экрана загрузки
+            setTimeout(function() {
+                document.getElementById('boot-screen').style.display = 'none';
+                document.getElementById('terminal').style.display = 'block';
+                document.getElementById('scanline').style.display = 'block';
+                
+                // Обновление времени
+                updateDateTime();
+                setInterval(updateDateTime, 1000);
+                
+                // Фокус на поле ввода команд
+                document.getElementById('command-input').focus();
+            }, 9000); // Загрузка длится 9 секунд
+            
+            // Навигация по меню
+            const menuItems = document.querySelectorAll('.menu-item');
+            const contentSections = document.querySelectorAll('.content-section');
+            
+            menuItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    // Убираем активный класс у всех пунктов меню
+                    menuItems.forEach(i => i.classList.remove('active'));
+                    
+                    // Добавляем активный класс текущему пункту
+                    this.classList.add('active');
+                    
+                    // Скрываем все секции контента
+                    contentSections.forEach(section => section.classList.remove('active'));
+                    
+                    // Показываем выбранную секцию
+                    const sectionId = this.getAttribute('data-section');
+                    document.getElementById(sectionId).classList.add('active');
+                    
+                    // Фокус на поле ввода команд
+                    document.getElementById('command-input').focus();
+                });
+            });
+            
+            // Обработка командной строки
+            const commandInput = document.getElementById('command-input');
+            
+            commandInput.addEventListener('keyup', function(event) {
+                if (event.key === 'Enter') {
+                    const command = this.value.trim().toLowerCase();
+                    this.value = '';
+                    
+                    // Обработка команд
+                    switch(command) {
+                        case 'help':
+                            alert('Доступные команды:\n\n' +
+                                  'help - показать эту справку\n' +
+                                  'clear - очистить терминал\n' +
+                                  'report - перейти к сводному отчету\n' +
+                                  'anomalies - перейти к классификации аномалий\n' +
+                                  'chronology - перейти к хронологии событий\n' +
+                                  'structure - перейти к организационной структуре\n' +
+                                  'nokvist - перейти к информации о Ноквистском филиале\n' +
+                                  'glossary - перейти к глоссарию терминов\n' +
+                                  'scan - запустить диагностику систем\n' +
+                                  'reboot - перезагрузить терминал');
+                            break;
+                            
+                        case 'clear':
+                            const contentElement = document.querySelector('.terminal-content');
+                            contentElement.innerHTML = '<div class="content-section active" id="main-report"><div class="content-title">ТЕРМИНАЛ ОЧИЩЕН</div><div class="content-text">Введите команду для продолжения работы. Используйте команду "help" для получения списка доступных команд.</div></div>';
+                            
+                            // Добавляем обратно командную строку
+                            const commandLine = document.createElement('div');
+                            commandLine.className = 'command-line';
+                            commandLine.innerHTML = '<span class="command-prompt">ГНК://ФАНТОМ-ТЕРМИНАЛ/СИ-08&gt;</span><input type="text" class="command-input" id="command-input" placeholder="Введите команду (help для справки)" autocomplete="off">';
+                            contentElement.appendChild(commandLine);
+                            
+                            // Перепривязываем обработчик событий
+                            document.getElementById('command-input').addEventListener('keyup', commandInputHandler);
+                            document.getElementById('command-input').focus();
+                            break;
+                            
+                        case 'report':
+                            switchSection('main-report');
+                            break;
+                            
+                        case 'anomalies':
+                            switchSection('anomalies');
+                            break;
+                            
+                        case 'chronology':
+                            switchSection('chronology');
+                            break;
+                            
+                        case 'structure':
+                            switchSection('structure');
+                            break;
+                            
+                        case 'nokvist':
+                            switchSection('nokvist');
+                            break;
+                            
+                        case 'glossary':
+                            switchSection('glossary');
+                            break;
+                            
+                        case 'scan':
+                            alert('Запуск диагностики систем...\n\n' +
+                                  'ТЕНЕСКАН: ОНЛАЙН (стабильно)\n' +
+                                  'НОКСОМ: ВОССТАНОВЛЕНИЕ (72%)\n' +
+                                  'ГЛОССАРИЙ: ОНЛАЙН (стабильно)\n' +
+                                  'ЭРЕБ-7: ОНЛАЙН (стабильно)\n' +
+                                  'ФАНТОМ-ТЕРМИНАЛ: ОНЛАЙН (стабильно)\n\n' +
+                                  'Диагностика завершена. Критических ошибок не обнаружено.');
+                            break;
+                            
+                        case 'reboot':
+                            if (confirm('Вы уверены, что хотите перезагрузить терминал? Весь несохраненный прогресс будет потерян.')) {
+                                location.reload();
+                            }
+                            break;
+                            
+                        case '':
+                            // Пустая команда - ничего не делать
+                            break;
+                            
+                        default:
+                            alert(`Неизвестная команда: "${command}". Введите "help" для получения списка доступных команд.`);
+                    }
+                }
+            });
+            
+            // Функция переключения секций
+            function switchSection(sectionId) {
+                // Убираем активный класс у всех пунктов меню
+                menuItems.forEach(i => i.classList.remove('active'));
+                
+                // Добавляем активный класс соответствующему пункту меню
+                document.querySelector(`.menu-item[data-section="${sectionId}"]`).classList.add('active');
+                
+                // Скрываем все секции контента
+                contentSections.forEach(section => section.classList.remove('active'));
+                
+                // Показываем выбранную секцию
+                document.getElementById(sectionId).classList.add('active');
+            }
+            
+            // Обработчик для перепривязанного поля ввода
+            function commandInputHandler(event) {
+                if (event.key === 'Enter') {
+                    const command = this.value.trim().toLowerCase();
+                    this.value = '';
+                    
+                    // Обработка команд (аналогично выше)
+                    switch(command) {
+                        case 'help':
+                            alert('Доступные команды:\n\n' +
+                                  'help - показать эту справку\n' +
+                                  'clear - очистить терминал\n' +
+                                  'report - перейти к сводному отчету\n' +
+                                  'anomalies - перейти к классификации аномалий\n' +
+                                  'chronology - перейти к хронологии событий\n' +
+                                  'structure - перейти к организационной структуре\n' +
+                                  'nokvist - перейти к информации о Ноквистском филиале\n' +
+                                  'glossary - перейти к глоссарию терминов\n' +
+                                  'scan - запустить диагностику систем\n' +
+                                  'reboot - перезагрузить терминал');
+                            break;
+                            
+                        case 'clear':
+                            const contentElement = document.querySelector('.terminal-content');
+                            contentElement.innerHTML = '<div class="content-section active" id="main-report"><div class="content-title">ТЕРМИНАЛ ОЧИЩЕН</div><div class="content-text">Введите команду для продолжения работы. Используйте команду "help" для получения списка доступных команд.</div></div>';
+                            
+                            const commandLine = document.createElement('div');
+                            commandLine.className = 'command-line';
+                            commandLine.innerHTML = '<span class="command-prompt">ГНК://ФАНТОМ-ТЕРМИНАЛ/СИ-08&gt;</span><input type="text" class="command-input" id="command-input" placeholder="Введите команду (help для справки)" autocomplete="off">';
+                            contentElement.appendChild(commandLine);
+                            
+                            document.getElementById('command-input').addEventListener('keyup', commandInputHandler);
+                            document.getElementById('command-input').focus();
+                            break;
+                            
+                        case 'report':
+                            switchSection('main-report');
+                            break;
+                            
+                        case 'anomalies':
+                            switchSection('anomalies');
+                            break;
+                            
+                        case 'chronology':
+                            switchSection('chronology');
+                            break;
+                            
+                        case 'structure':
+                            switchSection('structure');
+                            break;
+                            
+                        case 'nokvist':
+                            switchSection('nokvist');
+                            break;
+                            
+                        case 'glossary':
+                            switchSection('glossary');
+                            break;
+                            
+                        case 'scan':
+                            alert('Запуск диагностики систем...\n\n' +
+                                  'ТЕНЕСКАН: ОНЛАЙН (стабильно)\n' +
+                                  'НОКСОМ: ВОССТАНОВЛЕНИЕ (72%)\n' +
+                                  'ГЛОССАРИЙ: ОНЛАЙН (стабильно)\n' +
+                                  'ЭРЕБ-7: ОНЛАЙН (стабильно)\n' +
+                                  'ФАНТОМ-ТЕРМИНАЛ: ОНЛАЙН (стабильно)\n\n' +
+                                  'Диагностика завершена. Критических ошибок не обнаружено.');
+                            break;
+                            
+                        case 'reboot':
+                            if (confirm('Вы уверены, что хотите перезагрузить терминал? Весь несохраненный прогресс будет потерян.')) {
+                                location.reload();
+                            }
+                            break;
+                            
+                        case '':
+                            break;
+                            
+                        default:
+                            alert(`Неизвестная команда: "${command}". Введите "help" для получения списка доступных команд.`);
+                    }
+                }
+            }
+            
+            // Обновление даты и времени
+            function updateDateTime() {
+                const now = new Date();
+                const timeString = now.toLocaleTimeString('ru-RU');
+                const dateString = now.toLocaleDateString('ru-RU');
+                
+                document.getElementById('current-time').textContent = timeString;
+                document.getElementById('current-date').textContent = dateString;
+            }
+            
+            // Случайные эффекты глитча
+            setInterval(() => {
+                if (Math.random() < 0.05) {
+                    const glitch = document.querySelector('.glitch');
+                    glitch.style.opacity = '0.3';
+                    setTimeout(() => {
+                        glitch.style.opacity = '0.1';
+                    }, 100);
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
